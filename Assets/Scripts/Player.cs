@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -96,8 +97,7 @@ public class Player : MonoBehaviour
 
     private bool BoxIsValid(Vector2Int newPosition)
     {
-        // is or isnot one
-        // nextPos is or not wall
+
         if (direction == Vector2Int.up)
         {
             Vector2Int nextPos = new Vector2Int(newPosition.x, newPosition.y - 1);
@@ -163,7 +163,7 @@ public class Player : MonoBehaviour
         if (nextCell == null && currentCell == null)
         {
             Debug.LogError("currentCell is null , boxPos : " + currentBoxPos);
-            Debug.LogError("nextCell 为 null，boxPos: " + targetBoxPos);
+            Debug.LogError("nextCell 为 null锟斤拷boxPos: " + targetBoxPos);
             return;
         }
 
@@ -174,22 +174,36 @@ public class Player : MonoBehaviour
 
         if (currentBoxCell == null)
         {
-            Debug.LogError("current单元格不是 BoxCell!");
+            Debug.LogError("current锟斤拷元锟斤拷锟斤拷 BoxCell!");
             return;
         }
 
-        currentBoxCell.MoveBox(boxNewPos);
+        currentBoxCell.MoveBox(currentBoxCell, boxNewPos);
 
         cells[targetBoxPos.y, targetBoxPos.x] = currentBoxCell;
         cells[targetBoxPos.y, targetBoxPos.x].isBox = true;
+
+        if (currentCell is BoxCell)
+        {
+            Cell oldPosCell = currentCell.AddComponent<Cell>();
+            oldPosCell.Init(0);
+            cells[currentBoxPos.y, currentBoxPos.x] = oldPosCell;
+        }
+        // cells[currentBoxPos.y, currentBoxPos.x].isBox = false;
+        // cells[currentBoxPos.y, currentBoxPos.x].Init(0);
+        
+
         //cells[currentBoxPos.y, currentBoxPos.x].isBox = false;
         //cells[currentBoxPos.y, currentBoxPos.x] = currentCell.Init(0);
         //nextCell = currentBoxCell;
         //nextCell.isBox = true;
         //cells[targetBoxPos.y, targetBoxPos.x] = currentBoxCell;
-        //currentCell.isBox = false;
-        //currentCell.Init(0);
-        //cells[currentBoxPos.y, currentBoxPos.x] = currentCell;
+        //currentBoxCell.DestroyBox();
+        Debug.Log("position : "+ currentBoxPos+ "cells : " + cells[currentBoxPos.y, currentBoxPos.x]);
+        // currentCell = currentBoxCell.GetComponent<Cell>();
+        // currentCell.Init(0);
+        // currentCell.isBox = false;
+        // cells[currentBoxPos.y, currentBoxPos.x] = currentCell;
 
         position = currentBoxPos;
         transform.position = boxOldPos;
